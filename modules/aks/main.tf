@@ -15,7 +15,7 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
   automatic_upgrade_channel = "patch" # "patch", "rapid", "node-image", "stable" Defaults to "none"
   
   default_node_pool {
-    name       = "defaultpool"
+    name       = var.node_pool_name
     vm_size    = "Standard_DS2_v2"
     auto_scaling_enabled = true
     min_count = 1

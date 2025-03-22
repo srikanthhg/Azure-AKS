@@ -23,5 +23,4 @@ output "client_id" {
 output "client_secret" {
   description = "Password for service principal."
   value       = azuread_service_principal_password.main.value
-  sensitive = true
 }

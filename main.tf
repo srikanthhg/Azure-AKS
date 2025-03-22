@@ -18,27 +18,6 @@ resource "azurerm_role_assignment" "example" {
   depends_on = [module.service_principal]
 }
 
-# resource "azurerm_role_assignment" "example1" {
-#   scope                = "/subscriptions/${var.SUB_ID}"
-#   role_definition_name = "User Access Administrator"
-#   principal_id         = module.service_principal.service_principal_object_id
-
-#   depends_on = [module.service_principal]
-# }
-
-resource "azurerm_role_assignment" "kv" {
-  scope                = module.keyvault.keyvault_id
-  role_definition_name = "Key Vault Administrator" # or Key Vault Secrets User, Key Vault Administrator
-  principal_id         = module.service_principal.service_principal_object_id
-
-  depends_on = [module.service_principal]
-}
-
-resource "time_sleep" "wait_for_role_assignment" {
-  depends_on = [azurerm_role_assignment.kv]
-  create_duration = "300s" # Wait for 30 seconds
-}
-
 module "keyvault" {
   source                      = "./modules/Keyvault"
   keyvault_name               = var.keyvault_name
@@ -50,19 +29,29 @@ module "keyvault" {
   
 
   depends_on = [
-    azurerm_resource_group.rg1,
     module.service_principal
   ]
 }
+
+resource "azurerm_key_vault_access_policy" "example" {
+  key_vault_id = module.keyvault.keyvault_id
+  tenant_id    = module.service_principal.service_principal_tenant_id
+  object_id    =  module.service_principal.service_principal_object_id
+
+  secret_permissions = [
+    "Get", "List", "Set" 
+  ]
+
+}
+
 resource "azurerm_key_vault_secret" "example" {
   name         = module.service_principal.client_id
   value        = module.service_principal.client_secret
   key_vault_id = module.keyvault.keyvault_id
 
   depends_on = [ 
-    module.keyvault, 
-    azurerm_role_assignment.kv,
-    time_sleep.wait_for_role_assignment, ]
+    module.keyvault
+  ]
 }
 
 module "aks" {
@@ -74,6 +63,7 @@ module "aks" {
   service_principal_name = var.service_principal_name
   client_id              = module.service_principal.client_id
   client_secret          = module.service_principal.client_secret
+  node_pool_name = var.node_pool_name
 
   depends_on = [
     azurerm_resource_group.rg1,

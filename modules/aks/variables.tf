@@ -19,6 +19,10 @@ variable "aks_name" {
   type = string
   description = "The name of the AKS cluster"
 }
+variable "node_pool_name" {
+  type = string
+  description = "The name of the node pool"
+}
 
 variable "service_principal_name" {
     type = string
