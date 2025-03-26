@@ -11,15 +11,6 @@ terraform {
   }
   required_version = ">=1.9.0"
 
-  backend "azurerm" {
-    # client_id = module.service_principal.client_id
-    # client_secret = module.service_principal.client_secret
-    resource_group_name  = "testrg"
-    storage_account_name = "myexpensesa"
-    container_name       = "myexpensecontainer"
-    key                  = "testcluster.terraform.tfstate"
-  }
-
 }
 
 provider "azurerm" {

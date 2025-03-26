@@ -1,6 +1,11 @@
+# azure pipelines created one service principal-->api permissions-->add apermission-->microsoft graph-->application permission-->application-->Application.ReadWrite.All
+
+# User Access Administrator at subscription level and Key Vault Administrator at key vault level or subscription level
+
 resource "azurerm_resource_group" "rg1" {
   name     = var.rgname
   location = var.location
+
 }
 
 module "service_principal" {
@@ -10,7 +15,7 @@ module "service_principal" {
   depends_on = [azurerm_resource_group.rg1]
 }
 
-resource "azurerm_role_assignment" "example" {
+resource "azurerm_role_assignment" "rolespn" {
   scope                = "/subscriptions/${var.SUB_ID}"
   role_definition_name = "Contributor"
   principal_id         = module.service_principal.service_principal_object_id
@@ -27,21 +32,9 @@ module "keyvault" {
   service_principal_object_id = module.service_principal.service_principal_object_id
   service_principal_tenant_id = module.service_principal.service_principal_tenant_id
   
-
   depends_on = [
     module.service_principal
   ]
-}
-
-resource "azurerm_key_vault_access_policy" "example" {
-  key_vault_id = module.keyvault.keyvault_id
-  tenant_id    = module.service_principal.service_principal_tenant_id
-  object_id    =  module.service_principal.service_principal_object_id
-
-  secret_permissions = [
-    "Get", "List", "Set" 
-  ]
-
 }
 
 resource "azurerm_key_vault_secret" "example" {
@@ -73,8 +66,8 @@ module "aks" {
   ]
 }
 
-# resource "local_file" "foo" {
-#   content  = module.aks.config
-#   filename = "./kubeconfig"
-#   depends_on = [ module.aks ]
-# }
+resource "local_file" "foo" {
+  content  = module.aks.kube_config
+  filename = "./kubeconfig"
+  depends_on = [ module.aks ]
+}

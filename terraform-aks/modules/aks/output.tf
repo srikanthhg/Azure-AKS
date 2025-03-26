@@ -1,4 +1,4 @@
-output "config" {
+output "kube_config" {
     description = "Kubeconfig file for connecting to AKS cluster"
     value       = azurerm_kubernetes_cluster.aks-cluster.kube_config_raw
 }
