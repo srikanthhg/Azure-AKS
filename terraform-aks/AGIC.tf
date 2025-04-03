@@ -23,43 +23,43 @@ resource "helm_release" "AGIC" {
   recreate_pods    = true
   replace          = true
 
-  set {
+  set =[
+    {
     name  = "verbosityLevel"
     value = "3"
-  }
-  set {
-    name  = "appgw.subscriptionId"
-    value = "${var.SUB_ID}"
-  }
-  set {
-    name  = "appgw.resourceGroup"
-    value = "${var.rgname}"
-  }
-  set {
-    name  = "appgw.name"
-    value = "${module.appgw.appgw_name}"
-  }
-  set {
-    name  = "appgw.shared"
-    value = "false"
-  }
-
-  set {
-    name  = "armAuth.type"
-    value = "servicePrincipal"
-  }
-  set {
-    name  = "armAuth.secretJSON"
-    value = base64encode(local.parameters) # Pass the entire JSON-encoded string
-  }
-
-  set {
-    name  = "armAuth.identityClientID"
-    value = "${module.service_principal.client_id}"
-  }
-  set {
-    name  = "rbac.enabled"
-    value = "true"
-  }
+    },
+    {
+      name  = "appgw.subscriptionId"
+      value = "${var.SUB_ID}"
+    },
+    {
+      name  = "appgw.resourceGroup"
+      value = "${var.rgname}"
+    },
+    {
+      name  = "appgw.name"
+      value = "${module.appgw.appgw_name}"
+    },
+    {
+      name  = "appgw.shared"
+      value = "false"
+    },
+    {
+      name  = "armAuth.type"
+      value = "servicePrincipal"
+    },
+    {
+      name  = "armAuth.secretJSON"
+      value = base64encode(local.parameters) # Pass the entire JSON-encoded string
+    },
+    {
+      name  = "armAuth.identityClientID"
+      value = "${module.service_principal.client_id}"
+    },
+    {
+      name  = "rbac.enabled"
+      value = "true"
+    }
+  ]
   depends_on = [ module.appgw,module.aks]
 }
