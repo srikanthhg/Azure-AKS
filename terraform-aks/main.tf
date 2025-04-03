@@ -47,6 +47,42 @@ resource "azurerm_key_vault_secret" "example" {
   ]
 }
 
+resource "azurerm_key_vault_secret" "ssh_private_key" {
+  name         = "ssh-private-key"
+  value = module.aks.ssh_private_key
+  key_vault_id = module.keyvault.keyvault_id
+  
+  depends_on = [ 
+    module.keyvault
+  ]
+}
+
+module "vnet" {
+  source  = "./modules/vnet"
+  vnet_name = var.vnet_name
+  virtual_network_address_prefix = var.virtual_network_address_prefix
+  location = var.location
+  resource_group_name = var.rgname
+  aks_subnets_cidr = var.aks_subnets_cidr
+  aks_subnet_names = var.aks_subnet_names
+
+  depends_on = [ 
+    azurerm_resource_group.rg1 
+  ]
+}
+
+module "appgw" {
+  source = "./modules/appgw"
+  location = var.location
+  resource_group_name = var.rgname
+  vnet_name = var.vnet_name
+  appgw_subnet_id = module.vnet.subnet_ids[1]
+  
+  depends_on = [ 
+    module.vnet 
+  ]
+}
+
 module "aks" {
   source                 = "./modules/aks"
   location               = var.location
@@ -57,17 +93,18 @@ module "aks" {
   client_id              = module.service_principal.client_id
   client_secret          = module.service_principal.client_secret
   node_pool_name = var.node_pool_name
-
+  # appgw_id = module.appgw.appgw_id
   depends_on = [
     azurerm_resource_group.rg1,
     module.service_principal,
     module.keyvault,
-    azurerm_key_vault_secret.example
+    azurerm_key_vault_secret.example,
+    # module.appgw
   ]
 }
 
-resource "local_file" "foo" {
-  content  = module.aks.kube_config
+resource "local_file" "foo" { # write the kubernetes config(kubeconfig) to a local file
+  content  = "${module.aks.kube_config1}"
   filename = "./kubeconfig"
   depends_on = [ module.aks ]
 }

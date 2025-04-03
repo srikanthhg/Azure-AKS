@@ -1,7 +1,8 @@
 docs
+practice.txt
 # Local .terraform directories
 **/.terraform/*
-
+**/terraform-aks-without-AGIC/*
 # .tfstate files
 *.tfstate
 *.tfstate.*

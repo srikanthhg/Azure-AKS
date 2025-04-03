@@ -30,6 +30,11 @@ variable "service_principal_name" {
 
 variable "client_id" {}
 variable "client_secret" {
-    type = string
-    sensitive = true
+  type = string
+  sensitive = true
 }
+
+# variable "appgw_id" {
+#   type = string
+#   description = "The ID of the Application Gateway"
+# }
