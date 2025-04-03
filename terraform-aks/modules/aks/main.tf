@@ -23,11 +23,12 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     min_count = 1
     max_count = 3
     # node_count = 2 # The initial number of nodes which should exist in this Node Pool. You should not specify node_count when auto-scaling is enabled.
-    os_disk_size_gb = 80
+    os_disk_size_gb = 60
     # temporary_name_for_rotation = "tempnodepool"
     max_pods = 100
     type  = "VirtualMachineScaleSets"
     zones = [1, 2, 3]
+    vnet_subnet_id  = var.nodepoolsubnet
     node_labels = {
         "nodepool-type"    = "system"
         "environment"      = "prod"

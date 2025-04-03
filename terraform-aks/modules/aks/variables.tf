@@ -33,7 +33,7 @@ variable "client_secret" {
   type = string
   sensitive = true
 }
-
+variable "nodepoolsubnet"{}
 # variable "appgw_id" {
 #   type = string
 #   description = "The ID of the Application Gateway"

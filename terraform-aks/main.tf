@@ -93,6 +93,7 @@ module "aks" {
   client_id              = module.service_principal.client_id
   client_secret          = module.service_principal.client_secret
   node_pool_name = var.node_pool_name
+  nodepoolsubnet = module.vnet.subnet_ids[2]
   # appgw_id = module.appgw.appgw_id
   depends_on = [
     azurerm_resource_group.rg1,
