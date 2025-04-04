@@ -9,6 +9,12 @@ locals{
         "clientSecret": "${module.service_principal.client_secret}",
         "tenantId": "${module.service_principal.service_principal_tenant_id}",
         "subscriptionId": "${var.SUB_ID}",
+        "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
+	      "resourceManagerEndpointUrl": "https://management.azure.com/",
+        "activeDirectoryGraphResourceId": "https://graph.windows.net/", 
+        "sqlManagementEndpointUrl": "https://management.core.windows.net:8443/",
+        "galleryEndpointUrl": "https://gallery.azure.com/",    
+        "managementEndpointUrl": "https://management.core.windows.net/"
     })
 }
 
@@ -52,14 +58,18 @@ resource "helm_release" "AGIC" {
       name  = "armAuth.secretJSON"
       value = base64encode(local.parameters) # Pass the entire JSON-encoded string
     },
-    {
-      name  = "armAuth.identityClientID"
-      value = "${module.service_principal.client_id}"
-    },
+    # {
+    #   name  = "armAuth.identityClientID"
+    #   value = "${module.service_principal.client_id}"
+    # },
     {
       name  = "rbac.enabled"
       value = "true"
-    }
+    },
+    {
+      name  = "appgw.usePrivateIP"
+      value = "false"
+    }    
   ]
   depends_on = [ module.appgw,module.aks]
 }

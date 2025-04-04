@@ -11,7 +11,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   private_cluster_enabled = false
   role_based_access_control_enabled = true
   kubernetes_version  = local.selected_kubernetes_version
-  node_resource_group = "${var.resource_group_name}-nrg"
+  # node_resource_group = "${var.resource_group_name}-nrg" #expecting this "MC_ResourceGroup_ResourceName_Location" format
 
   sku_tier = "Free" # "Standard", "Premium" Defaults to "Free"
   automatic_upgrade_channel = "patch" # "patch", "rapid", "node-image", "stable" Defaults to "none"
