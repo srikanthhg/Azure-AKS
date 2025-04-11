@@ -88,7 +88,7 @@ resource "azurerm_virtual_machine" "main" {
     computer_name  = "hostname"
     admin_username = "testadmin"
     admin_password = "Password1234!"
-    # custom_data = filebase64("bootstrap.sh")
+    custom_data = file("bootstrap.sh") # or custom_data = filebase64("bootstrap.sh")
   }
   os_profile_linux_config {
     disable_password_authentication = false
@@ -113,14 +113,10 @@ resource "null_resource" "aks_connect" {
     password = "Password1234!"
   }
   provisioner "remote-exec" {
-    inline =[
-
+    inline = [
       "echo '${file("bootstrap.sh")}' > /tmp/bootstrap.sh",
-      "chmod +x /tmp/bootstrap.sh",
-      
-      
+      "chmod +x /tmp/bootstrap.sh",     
       "echo 'az login --service-principal -u ${module.service_principal.client_id} -p ${module.service_principal.client_secret} --tenant ${module.service_principal.service_principal_tenant_id}' >> /tmp/bootstrap.sh",
-
       "echo 'az aks get-credentials --resource-group ${var.rgname} --name ${var.aks_name}' >> /tmp/bootstrap.sh",
       "sh /tmp/bootstrap.sh"
     ]

@@ -12,7 +12,7 @@ variable "resource_group_name" {
 variable "kubernetes_version" {
   type = string
   description = "The Kubernetes version to use for the AKS cluster"
-  default = ""
+  # default = ""
 }
 
 variable "aks_name" {

@@ -4,7 +4,7 @@ resource "azurerm_public_ip" "pip" {
   location            = var.location
   allocation_method   = "Static" # Static or Dynamic
   sku                 = "Standard"
-  zones = [1, 2, 3]
+  # zones = [1, 2, 3]
 
   tags = {
     environment = "Production"
@@ -15,13 +15,14 @@ resource "azurerm_application_gateway" "appgw" {
   name                = "applicationGateway"
   resource_group_name = var.resource_group_name
   location            = var.location
-  enable_http2 = true
-  zones = [1, 2, 3]
+  enable_http2 = false
+  # zones = [1, 2, 3]
 
   sku {
     name     = "Standard_v2" # Basic, WAF_v2, Standard_v2
     tier     = "Standard_v2" 
-    capacity = 2
+    capacity = 1
+    
   }
 
   gateway_ip_configuration {
@@ -48,7 +49,7 @@ resource "azurerm_application_gateway" "appgw" {
     cookie_based_affinity = "Disabled"
     port                  = 80
     protocol              = "Http"
-    request_timeout       = 1
+    request_timeout       = 20
   }
 
   http_listener {
@@ -60,12 +61,13 @@ resource "azurerm_application_gateway" "appgw" {
 
   request_routing_rule {
     name                       = local.request_routing_rule_name
-    priority                   = 1
+    priority                   = "100"
     rule_type                  = "Basic" # Basic, PathBasedRouting
     http_listener_name         = local.listener_name
     backend_address_pool_name  = local.backend_address_pool_name
     backend_http_settings_name = local.http_setting_name
   }
+
   lifecycle {
     ignore_changes = [
        tags,
@@ -75,6 +77,6 @@ resource "azurerm_application_gateway" "appgw" {
        probe,
        request_routing_rule,
     ]
-   }
+  }
 }
 

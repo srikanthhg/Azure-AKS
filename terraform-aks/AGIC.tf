@@ -23,8 +23,7 @@ resource "helm_release" "AGIC" {
   repository = "https://myexpsa.blob.core.windows.net/mytestcontainer"
   chart      = "ingress-azure"
   version    = "1.8.0" 
-  namespace  = "default" 
-  timeout    = "600"
+  # namespace  = "default" 
   cleanup_on_fail  = true
   recreate_pods    = true
   replace          = true
@@ -58,10 +57,6 @@ resource "helm_release" "AGIC" {
       name  = "armAuth.secretJSON"
       value = base64encode(local.parameters) # Pass the entire JSON-encoded string
     },
-    # {
-    #   name  = "armAuth.identityClientID"
-    #   value = "${module.service_principal.client_id}"
-    # },
     {
       name  = "rbac.enabled"
       value = "true"
@@ -69,6 +64,22 @@ resource "helm_release" "AGIC" {
     {
       name  = "appgw.usePrivateIP"
       value = "false"
+    },
+    {
+      name  = "ingressClassResource.enabled"
+      value = "true"
+    },
+    {
+      name  = "ingressClassResource.name"
+      value = "azure-application-gateway"
+    },
+    {
+      name  = "ingressClassResource.controllerValue"
+      value = "azure-application-gateway"
+    },
+    {
+      name  = "watchNamespace"
+      value = "" # or specific namespace if you prefer
     }    
   ]
   depends_on = [ module.appgw,module.aks]

@@ -1,6 +1,5 @@
 # Application ID or client ID
 
-
 output "service_principal_name" {
   description = "The object id of service principal. Can be used to assign roles to user."
   value       = azuread_service_principal.main.display_name

@@ -21,14 +21,13 @@ variable "aks_name" {
   description = "The name of the AKS cluster"
 }
 
-
 variable "keyvault_name" {
   type    = string
 }
 
 variable "kubernetes_version" {
   type    = string
-  default = ""
+  # default = ""
 }
 
 variable "vnet_name" {

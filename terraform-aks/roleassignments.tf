@@ -1,7 +1,7 @@
 # Role assignments
 resource "azurerm_role_assignment" "ra1" {
     scope                = azurerm_resource_group.rg1.id
-    role_definition_name = "Contributor" #Reader
+    role_definition_name = "Contributor"
     principal_id         = module.service_principal.service_principal_object_id
 }
 
